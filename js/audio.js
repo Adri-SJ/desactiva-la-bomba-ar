@@ -46,11 +46,42 @@ window.GameAudio = (() => {
     vibrate([60, 35, 60, 35, 120]);
   }
 
+  function explosion() {
+    const c = ensure();
+    const duration = .7;
+    const buffer = c.createBuffer(1, Math.floor(c.sampleRate * duration), c.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    for (let i = 0; i < data.length; i++) {
+      const decay = 1 - i / data.length;
+      data[i] = (Math.random() * 2 - 1) * decay * decay;
+    }
+
+    const source = c.createBufferSource();
+    const filter = c.createBiquadFilter();
+    const gain = c.createGain();
+
+    source.buffer = buffer;
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(850, c.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(120, c.currentTime + duration);
+    gain.gain.setValueAtTime(.18, c.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.0001, c.currentTime + duration);
+
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(c.destination);
+    source.start();
+
+    tone(90, .45, "sine", .16);
+    vibrate([220, 70, 280]);
+  }
+
   function lose() {
     tone(180, .25, "sawtooth", .05);
     tone(145, .3, "sawtooth", .045, .18);
     tone(110, .45, "square", .035, .40);
-    vibrate([180, 80, 180]);
+    setTimeout(explosion, 120);
   }
 
   function vibrate(pattern) {

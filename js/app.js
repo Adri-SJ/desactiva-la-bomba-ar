@@ -4,19 +4,6 @@
   let demo = params.get("demo") === "1";
   let targetVisible = false;
 
-  function assetsMarkup() {
-    return `
-      <a-assets>
-        <a-asset-item id="model-bomb-1" src="./assets/models/bomba-quaternius.glb"></a-asset-item>
-        <a-asset-item id="model-bomb-2" src="./assets/models/c4-bomb.glb"></a-asset-item>
-        <a-asset-item id="model-bomb-3" src="./assets/models/time_bomb.glb"></a-asset-item>
-
-        <a-asset-item id="model-battery" src="./assets/models/bateria.glb"></a-asset-item>
-        <a-asset-item id="model-pipes" src="./assets/models/panel-tuberias.glb"></a-asset-item>
-        <a-asset-item id="model-computer" src="./assets/models/computadora-scifi.glb"></a-asset-item>
-      </a-assets>`;
-  }
-
   function makeBombEntity() {
     return `
       <a-entity id="bomb-stage" position="0 0 0" rotation="-8 0 0">
@@ -24,7 +11,7 @@
         <a-gltf-model
           id="bomb-1"
           class="phase-bomb"
-          src="#model-bomb-1"
+          src="./assets/models/bomba-quaternius.glb"
           fit-gltf="size: 1.05"
           position="0 .02 .18"
           rotation="0 0 0">
@@ -34,7 +21,7 @@
           id="bomb-2"
           class="phase-bomb"
           visible="false"
-          src="#model-bomb-2"
+          src="./assets/models/c4-bomb.glb"
           fit-gltf="size: 1.22"
           position="0 .02 .18"
           rotation="0 0 0">
@@ -44,7 +31,7 @@
           id="bomb-3"
           class="phase-bomb"
           visible="false"
-          src="#model-bomb-3"
+          src="./assets/models/time_bomb.glb"
           fit-gltf="size: 1.22"
           position="0 .02 .18"
           rotation="0 0 0">
@@ -53,7 +40,7 @@
         <a-entity id="phase-1-extras">
           <a-gltf-model
             id="module-pipes"
-            src="#model-pipes"
+            src="./assets/models/panel-tuberias.glb"
             fit-gltf="size: .32"
             position="-.72 .26 .12"
             rotation="-90 0 0"
@@ -62,7 +49,7 @@
 
           <a-gltf-model
             id="module-computer"
-            src="#model-computer"
+            src="./assets/models/computadora-scifi.glb"
             fit-gltf="size: .32"
             position=".72 .26 .12"
             rotation="0 180 0"
@@ -71,7 +58,7 @@
 
           <a-gltf-model
             id="module-battery"
-            src="#model-battery"
+            src="./assets/models/bateria.glb"
             fit-gltf="size: .26"
             position="0 .68 .08"
             rotation="0 -20 0"
@@ -96,7 +83,7 @@
     if (demo) {
       root.innerHTML = `
         <a-scene embedded vr-mode-ui="enabled:false" renderer="colorManagement:true">
-          ${assetsMarkup()}
+
           <a-entity position="0 1.6 -2.5">
             ${makeBombEntity()}
           </a-entity>
@@ -117,8 +104,6 @@
         vr-mode-ui="enabled:false"
         device-orientation-permission-ui="enabled:false">
 
-        ${assetsMarkup()}
-
         <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
         <a-light type="ambient" intensity="1.2"></a-light>
         <a-light type="directional" position="1 2 1" intensity="1.1"></a-light>
@@ -127,6 +112,12 @@
           ${makeBombEntity()}
         </a-entity>
       </a-scene>`;
+
+    root.querySelectorAll("a-gltf-model").forEach((model) => {
+      model.addEventListener("model-error", (event) => {
+        console.error("Error cargando GLB:", model.getAttribute("src"), event.detail);
+      });
+    });
 
     const target = root.querySelector("#target");
     target.addEventListener("targetFound", () => setTargetVisible(true));

@@ -32,39 +32,11 @@
           class="phase-bomb"
           visible="false"
           src="./assets/models/time_bomb.glb"
-          fit-gltf="size: 1.22"
+          fit-gltf="size: .62"
           position="0 .02 .18"
-          rotation="0 0 0">
+          rotation="0 0 0"
+          scale=".48 .48 .48">
         </a-gltf-model>
-
-        <a-entity id="phase-1-extras">
-          <a-gltf-model
-            id="module-pipes"
-            src="./assets/models/panel-tuberias.glb"
-            fit-gltf="size: .32"
-            position="-.72 .26 .12"
-            rotation="-90 0 0"
-            animation="property: position; to: -.72 .34 .12; dir: alternate; loop: true; dur: 1700; easing: easeInOutSine">
-          </a-gltf-model>
-
-          <a-gltf-model
-            id="module-computer"
-            src="./assets/models/computadora-scifi.glb"
-            fit-gltf="size: .32"
-            position=".72 .26 .12"
-            rotation="0 180 0"
-            animation="property: position; to: .72 .35 .12; dir: alternate; loop: true; dur: 1900; easing: easeInOutSine">
-          </a-gltf-model>
-
-          <a-gltf-model
-            id="module-battery"
-            src="./assets/models/bateria.glb"
-            fit-gltf="size: .26"
-            position="0 .68 .08"
-            rotation="0 -20 0"
-            animation="property: position; to: 0 .76 .08; dir: alternate; loop: true; dur: 2100; easing: easeInOutSine">
-          </a-gltf-model>
-        </a-entity>
 
         <a-text id="bomb-label" value="AR-07" position="-.22 .52 .22" width=".75" color="#ff3b4e"></a-text>
 
@@ -131,28 +103,20 @@
       document.getElementById("bomb-3")
     ];
 
-    const extras = document.getElementById("phase-1-extras");
     const label = document.getElementById("bomb-label");
 
     bombs.forEach((bomb) => {
       if (bomb) bomb.setAttribute("visible", false);
     });
 
-    if (extras) extras.setAttribute("visible", false);
-
     if (moduleIndex === null || moduleIndex === undefined) {
       if (bombs[0]) bombs[0].setAttribute("visible", true);
-      if (extras) extras.setAttribute("visible", true);
       if (label) label.setAttribute("value", "AR-07");
       return;
     }
 
     const active = bombs[moduleIndex];
     if (active) active.setAttribute("visible", true);
-
-    if (moduleIndex === 0 && extras) {
-      extras.setAttribute("visible", true);
-    }
 
     if (label) {
       label.setAttribute("value", `AR-0${moduleIndex + 7}`);

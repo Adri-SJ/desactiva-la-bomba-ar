@@ -1,6 +1,6 @@
 window.BombGame = (() => {
   const state = {
-    time: 60,
+    time: 90,
     lives: 3,
     score: 0,
     module: 0,
@@ -10,7 +10,7 @@ window.BombGame = (() => {
     energyStart: 0,
     sequence: [],
     inputIndex: 0,
-    locked: false,
+    locked: false,\n    energyHits: 0,
   };
 
   const modules = [
@@ -36,7 +36,7 @@ window.BombGame = (() => {
 
   function start() {
     clearAll();
-    state.time = 60;
+    state.time = 90;
     state.lives = 3;
     state.score = 0;
     state.module = 0;
@@ -105,20 +105,28 @@ window.BombGame = (() => {
   }
 
   function renderWires() {
-    $("module-instruction").textContent = "El indicador central parpadea en AZUL. Corta el circuito conectado al mismo color.";
+    const wires = [
+      { key: "red", label: "ROJO", className: "wire-red" },
+      { key: "blue", label: "AZUL", className: "wire-blue" },
+      { key: "yellow", label: "AMARILLO", className: "wire-yellow" }
+    ];
+    const target = wires[Math.floor(Math.random() * wires.length)];
+
+    $("module-instruction").textContent =
+      `El indicador central marca ${target.label}. Corta el circuito del mismo color.`;
+
     $("module-content").innerHTML = `
       <div class="grid3">
-        <button class="wire-btn wire-red" data-wire="red">ROJO</button>
-        <button class="wire-btn wire-blue" data-wire="blue">AZUL</button>
-        <button class="wire-btn wire-yellow" data-wire="yellow">AMARILLO</button>
+        ${wires.map(w => `<button class="wire-btn ${w.className}" data-wire="${w.key}">${w.label}</button>`).join("")}
       </div>`;
 
     document.querySelectorAll("[data-wire]").forEach(btn => {
       btn.addEventListener("click", () => {
         if (state.locked) return;
-        if (btn.dataset.wire === "blue") {
-          correct(150, "Circuito aislado.");
-          btn.disabled = true;
+
+        if (btn.dataset.wire === target.key) {
+          correct(150, `Circuito ${target.label} aislado.`);
+          document.querySelectorAll("[data-wire]").forEach(b => b.disabled = true);
           $("module-status").style.background = "var(--ok)";
           nextModule();
         } else {
@@ -127,160 +135,81 @@ window.BombGame = (() => {
       });
     });
   }
-
-  function renderSequence() {
-    $("module-instruction").textContent = "Memoriza la secuencia de símbolos y repítela cuando termine.";
-    const symbols = ["▲", "●", "■"];
-    state.sequence = Array.from({length: 4}, () => Math.floor(Math.random() * 3));
-    state.inputIndex = 0;
-
-    $("module-content").innerHTML = `
-      <div class="grid3">
-        ${symbols.map((s, i) => `<button class="symbol-btn" data-symbol="${i}" disabled>${s}</button>`).join("")}
-      </div>`;
-
-    const buttons = [...document.querySelectorAll("[data-symbol]")];
-    state.locked = true;
-
-    state.sequence.forEach((idx, n) => {
-      setTimeout(() => {
-        buttons[idx].classList.add("flash");
-        GameAudio.tick();
-        setTimeout(() => buttons[idx].classList.remove("flash"), 260);
-      }, 500 + n * 650);
-    });
-
-    setTimeout(() => {
-      buttons.forEach(b => b.disabled = false);
-      state.locked = false;
-      setFeedback("Tu turno.");
-    }, 500 + state.sequence.length * 650);
-
-    buttons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        if (state.locked) return;
-        const value = Number(btn.dataset.symbol);
-        const expected = state.sequence[state.inputIndex];
-
-        if (value === expected) {
-          state.inputIndex++;
-          GameAudio.tick();
-          btn.classList.add("flash");
-          setTimeout(() => btn.classList.remove("flash"), 140);
-
-          if (state.inputIndex === state.sequence.length) {
-            state.locked = true;
-            correct(250, "Secuencia validada.");
-            $("module-status").style.background = "var(--ok)";
-            nextModule();
-          }
-        } else {
-          wrong("Secuencia incorrecta. Mira una nueva.", 7);
-          if (!state.running) return;
-          state.inputIndex = 0;
-          setTimeout(renderSequence, 700);
-        }
-      });
-    });
-  }
-
   function renderEnergy() {
-    $("module-instruction").textContent = "Detén el pulso cuando el cursor esté dentro de la zona verde.";
+    state.energyHits = 0;
+    $("module-instruction").textContent =
+      "Estabiliza el núcleo 3 veces. La zona segura se hará más pequeña en cada acierto.";
+
     $("module-content").innerHTML = `
       <div class="energy-wrap">
         <div class="energy-track">
-          <div class="safe-zone"></div>
+          <div id="safe-zone" class="safe-zone"></div>
           <div id="energy-cursor" class="energy-cursor"></div>
         </div>
+        <div id="energy-progress" style="text-align:center;font-weight:800;">ESTABILIZACIONES: 0/3</div>
         <button id="lock-energy" class="primary">BLOQUEAR ENERGÍA</button>
       </div>`;
 
     const cursor = $("energy-cursor");
-    state.energyStart = performance.now();
+    const safeZone = $("safe-zone");
+    const progress = $("energy-progress");
+
+    const rounds = [
+      { min: .36, max: .64, width: 28 },
+      { min: .41, max: .59, width: 18 },
+      { min: .455, max: .545, width: 9 }
+    ];
+
+    function configureRound() {
+      const round = rounds[state.energyHits];
+      const left = ((1 - round.width / 100) / 2) * 100;
+      safeZone.style.left = `${left}%`;
+      safeZone.style.width = `${round.width}%`;
+      progress.textContent = `ESTABILIZACIONES: ${state.energyHits}/3`;
+      state.energyStart = performance.now();
+    }
+
+    configureRound();
 
     const animate = (now) => {
       if (!state.running || state.module !== 2) return;
       const t = (now - state.energyStart) / 1000;
-      const x = (Math.sin(t * 4.1 - Math.PI / 2) + 1) / 2;
+      const speed = 4.0 + state.energyHits * 0.8;
+      const x = (Math.sin(t * speed - Math.PI / 2) + 1) / 2;
       cursor.style.left = `calc(${(x * 100).toFixed(2)}% - 4px)`;
       cursor.dataset.x = x.toFixed(4);
       state.energyRaf = requestAnimationFrame(animate);
     };
+
     state.energyRaf = requestAnimationFrame(animate);
 
     $("lock-energy").addEventListener("click", () => {
       if (state.locked) return;
+
       const x = Number(cursor.dataset.x || 0);
-      if (x >= .40 && x <= .60) {
-        cancelAnimationFrame(state.energyRaf);
-        correct(350, "Energía estabilizada.");
-        $("module-status").style.background = "var(--ok)";
-        state.locked = true;
-        setTimeout(win, 850);
+      const round = rounds[state.energyHits];
+
+      if (x >= round.min && x <= round.max) {
+        state.energyHits++;
+        correct(125, `Estabilización ${state.energyHits}/3 correcta.`);
+
+        if (state.energyHits >= 3) {
+          cancelAnimationFrame(state.energyRaf);
+          $("module-status").style.background = "var(--ok)";
+          state.locked = true;
+          setFeedback("Núcleo completamente estabilizado. +375 pts", "ok");
+          setTimeout(win, 850);
+          return;
+        }
+
+        configureRound();
+        setFeedback(
+          `Bien. Ahora la zona segura es más pequeña (${state.energyHits + 1}/3).`,
+          "ok"
+        );
       } else {
         wrong("Pulso fuera de rango.", 6);
       }
     });
   }
-
-  function win() {
-    if (!state.running) return;
-    state.running = false;
-    clearInterval(state.timerId);
-    cancelAnimationFrame(state.energyRaf);
-
-    const bonus = Math.max(0, state.time) * 10 + state.lives * 100;
-    state.score += bonus;
-    ui();
-    updateBombProgress(3);
-    flashBomb("ok");
-    GameAudio.win();
-
-    $("module-panel").classList.add("hidden");
-    $("result-kicker").textContent = "MISIÓN COMPLETADA";
-    $("result-title").textContent = "DISPOSITIVO ESTABILIZADO";
-    $("result-copy").textContent = `Bonus de misión: +${bonus} puntos por tiempo y vidas restantes.`;
-    $("final-score").textContent = String(state.score).padStart(4, "0");
-    $("result").classList.remove("hidden");
-  }
-
-  function lose(reason) {
-    if (!state.running) return;
-    state.running = false;
-    clearInterval(state.timerId);
-    cancelAnimationFrame(state.energyRaf);
-    state.time = Math.max(0, state.time);
-    ui();
-    flashBomb("bad");
-    GameAudio.lose();
-
-    $("module-panel").classList.add("hidden");
-    $("result-kicker").textContent = "MISIÓN FALLIDA";
-    $("result-title").textContent = "SISTEMA CRÍTICO";
-    $("result-copy").textContent = reason;
-    $("final-score").textContent = String(state.score).padStart(4, "0");
-    $("result").classList.remove("hidden");
-  }
-
-  function clearAll() {
-    clearInterval(state.timerId);
-    cancelAnimationFrame(state.energyRaf);
-  }
-
-  function updateBombProgress(step) {
-    document.querySelectorAll(".bomb-led").forEach((led, i) => {
-      led.setAttribute("color", i < step ? "#53e68b" : "#ffb020");
-      led.setAttribute("emissive", i < step ? "#53e68b" : "#ffb020");
-    });
-  }
-
-  function flashBomb(type) {
-    const core = document.querySelector("#bomb-core");
-    if (!core) return;
-    const c = type === "ok" ? "#53e68b" : "#ff3b4e";
-    core.setAttribute("color", c);
-    setTimeout(() => core.setAttribute("color", "#151b24"), 260);
-  }
-
-  return { start, clearAll };
-})();
+;

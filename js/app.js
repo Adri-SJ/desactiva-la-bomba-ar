@@ -18,6 +18,7 @@
       <a-entity id="bomb" position="0 0 0" rotation="-18 0 0" scale="0.78 0.78 0.78">
         <a-gltf-model
           id="bomb-core"
+          class="bomb-model"
           src="#model-bomb"
           position="0 -.05 .02"
           rotation="0 0 0"
@@ -114,12 +115,18 @@
 
   function showModuleModel(moduleIndex) {
     const map = ["module-pipes", "module-computer", "module-battery"];
+    const bombCore = document.getElementById("bomb-core");
 
     document.querySelectorAll(".module-model").forEach((el) => {
       el.setAttribute("visible", false);
     });
 
-    if (moduleIndex === null || moduleIndex === undefined) return;
+    if (moduleIndex === null || moduleIndex === undefined) {
+      if (bombCore) bombCore.setAttribute("visible", true);
+      return;
+    }
+
+    if (bombCore) bombCore.setAttribute("visible", false);
 
     const active = document.getElementById(map[moduleIndex]);
     if (!active) return;

@@ -57,5 +57,5 @@ window.GameAudio = (() => {
     if (navigator.vibrate) navigator.vibrate(pattern);
   }
 
-  return { ensure, success, error, tick, win, lose, vibrate };
+  return { ensure, success, error, tick, win, lose, explosion, vibrate };
 })();

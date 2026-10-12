@@ -43,9 +43,10 @@
           class="module-model"
           visible="false"
           src="#model-pipes"
-          position="0 .04 .22"
+          position="-.95 .18 .10"
           rotation="-90 0 0"
-          scale=".34 .34 .34">
+          scale=".22 .22 .22"
+          animation="property: position; to: -.95 .26 .10; dir: alternate; loop: true; dur: 1700; easing: easeInOutSine">
         </a-gltf-model>
 
         <a-gltf-model
@@ -53,9 +54,10 @@
           class="module-model"
           visible="false"
           src="#model-computer"
-          position="0 .08 .22"
+          position=".95 .18 .10"
           rotation="0 180 0"
-          scale=".42 .42 .42">
+          scale=".22 .22 .22"
+          animation="property: position; to: .95 .28 .10; dir: alternate; loop: true; dur: 1900; easing: easeInOutSine">
         </a-gltf-model>
 
         <a-gltf-model
@@ -63,9 +65,10 @@
           class="module-model"
           visible="false"
           src="#model-battery"
-          position="0 .08 .20"
+          position="0 .72 .04"
           rotation="0 -20 0"
-          scale=".58 .58 .58">
+          scale=".28 .28 .28"
+          animation="property: position; to: 0 .82 .04; dir: alternate; loop: true; dur: 2100; easing: easeInOutSine">
         </a-gltf-model>
       </a-entity>`;
   }
@@ -114,11 +117,14 @@
   }
 
   function showModuleModel(moduleIndex) {
-    const map = ["module-pipes", "module-computer", "module-battery"];
     const bombCore = document.getElementById("bomb-core");
+    const pipes = document.getElementById("module-pipes");
+    const computer = document.getElementById("module-computer");
+    const battery = document.getElementById("module-battery");
+    const extras = [pipes, computer, battery];
 
-    document.querySelectorAll(".module-model").forEach((el) => {
-      el.setAttribute("visible", false);
+    extras.forEach((el) => {
+      if (el) el.setAttribute("visible", false);
     });
 
     if (moduleIndex === null || moduleIndex === undefined) {
@@ -126,12 +132,54 @@
       return;
     }
 
+    // FASE 1: la bomba redonda es la protagonista.
+    // Los tres GLB anteriores quedan flotando como componentes del dispositivo.
+    if (moduleIndex === 0) {
+      if (bombCore) bombCore.setAttribute("visible", true);
+
+      if (pipes) {
+        pipes.setAttribute("visible", true);
+        pipes.setAttribute("position", "-.95 .18 .10");
+        pipes.setAttribute("rotation", "-90 0 0");
+        pipes.setAttribute("scale", ".22 .22 .22");
+      }
+
+      if (computer) {
+        computer.setAttribute("visible", true);
+        computer.setAttribute("position", ".95 .18 .10");
+        computer.setAttribute("rotation", "0 180 0");
+        computer.setAttribute("scale", ".22 .22 .22");
+      }
+
+      if (battery) {
+        battery.setAttribute("visible", true);
+        battery.setAttribute("position", "0 .72 .04");
+        battery.setAttribute("rotation", "0 -20 0");
+        battery.setAttribute("scale", ".28 .28 .28");
+      }
+
+      return;
+    }
+
+    // A partir de aquí se retira la primera bomba para que no tape los demás modelos.
     if (bombCore) bombCore.setAttribute("visible", false);
 
-    const active = document.getElementById(map[moduleIndex]);
-    if (!active) return;
+    // FASE 2: computadora sci-fi, mucho más grande y centrada.
+    if (moduleIndex === 1 && computer) {
+      computer.setAttribute("visible", true);
+      computer.setAttribute("position", "0 .05 .22");
+      computer.setAttribute("rotation", "0 180 0");
+      computer.setAttribute("scale", "1.05 1.05 1.05");
+      return;
+    }
 
-    active.setAttribute("visible", true);
+    // FASE 3: batería/celda de energía, grande y centrada.
+    if (moduleIndex === 2 && battery) {
+      battery.setAttribute("visible", true);
+      battery.setAttribute("position", "0 .02 .20");
+      battery.setAttribute("rotation", "0 -20 0");
+      battery.setAttribute("scale", "1.25 1.25 1.25");
+    }
   }
 
   window.BombVisuals = { showModuleModel };

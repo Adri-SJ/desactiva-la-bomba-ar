@@ -167,18 +167,18 @@
     // FASE 2: computadora sci-fi, mucho más grande y centrada.
     if (moduleIndex === 1 && computer) {
       computer.setAttribute("visible", true);
-      computer.setAttribute("position", "0 .05 .22");
+      computer.setAttribute("position", "0 0 .18");
       computer.setAttribute("rotation", "0 180 0");
-      computer.setAttribute("scale", "1.05 1.05 1.05");
+      computer.setAttribute("scale", "1.35 1.35 1.35");
       return;
     }
 
     // FASE 3: batería/celda de energía, grande y centrada.
     if (moduleIndex === 2 && battery) {
       battery.setAttribute("visible", true);
-      battery.setAttribute("position", "0 .02 .20");
+      battery.setAttribute("position", "0 0 .18");
       battery.setAttribute("rotation", "0 -20 0");
-      battery.setAttribute("scale", "1.25 1.25 1.25");
+      battery.setAttribute("scale", "1.55 1.55 1.55");
     }
   }
 

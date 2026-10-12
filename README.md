@@ -51,7 +51,7 @@ Los tres modelos utilizados son de **Quaternius** y se distribuyen como **Public
 
 | Archivo en el proyecto | Modelo original | Autor | Licencia | Fuente |
 |---|---|---|---|---|
-| `bateria.glb` | Battery | Quaternius | CC0 / Public Domain | https://poly.pizza/m/MYa3uWdwPU |
+| `bomba-quaternius.glb` | Bomb | Quaternius | CC0 / Public Domain | https://poly.pizza/m/0oNZ1y6ghg |\n| `bateria.glb` | Battery | Quaternius | CC0 / Public Domain | https://poly.pizza/m/MYa3uWdwPU |
 | `panel-tuberias.glb` | Pipes Panel | Quaternius | CC0 / Public Domain | https://poly.pizza/m/rzvuy93JU3 |
 | `computadora-scifi.glb` | Scifi Computer | Quaternius | CC0 / Public Domain | https://poly.pizza/m/U0xmt6tUlL |
 

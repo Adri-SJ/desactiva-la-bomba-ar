@@ -154,6 +154,37 @@
     target.addEventListener("targetLost", () => setTargetVisible(false));
   }
 
+  function showModuleModel(moduleIndex) {
+    const map = ["module-pipes", "module-computer", "module-battery"];
+    document.querySelectorAll(".module-model").forEach((el) => {
+      el.setAttribute("visible", false);
+      el.removeAttribute("animation__enter");
+    });
+
+    if (moduleIndex === null || moduleIndex === undefined) return;
+
+    const active = document.getElementById(map[moduleIndex]);
+    if (!active) return;
+
+    active.setAttribute("visible", true);
+
+    const targetScale = active.getAttribute("scale");
+    active.setAttribute("scale", {
+      x: targetScale.x * 0.72,
+      y: targetScale.y * 0.72,
+      z: targetScale.z * 0.72
+    });
+
+    active.setAttribute("animation__enter", {
+      property: "scale",
+      to: targetScale,
+      dur: 320,
+      easing: "easeOutBack"
+    });
+  }
+
+  window.BombVisuals = { showModuleModel };
+
   function setTargetVisible(visible) {
     targetVisible = visible;
     $("tracking-message").classList.toggle("hidden", visible);
@@ -195,7 +226,7 @@
   });
 
   $("restart").addEventListener("click", () => {
-    BombGame.clearAll();
+    BombGame.clearAll();\n    window.BombVisuals?.showModuleModel(null);
     $("result").classList.add("hidden");
     $("module-panel").classList.add("hidden");
 

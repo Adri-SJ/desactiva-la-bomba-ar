@@ -4,6 +4,46 @@
   let demo = params.get("demo") === "1";
   let targetVisible = false;
 
+  if (!AFRAME.components["model-feedback"]) {
+    AFRAME.registerComponent("model-feedback", {
+      schema: { label: { type: "string", default: "Objeto 3D" } },
+      init() {
+        this.el.addEventListener("click", () => {
+          GameAudio.tick();
+          const original = this.el.getAttribute("scale");
+          this.el.setAttribute("animation__tap", {
+            property: "scale",
+            to: {
+              x: original.x * 1.12,
+              y: original.y * 1.12,
+              z: original.z * 1.12
+            },
+            dur: 120,
+            dir: "alternate",
+            loop: 1,
+            easing: "easeOutQuad"
+          });
+
+          const feedback = document.getElementById("feedback");
+          const panel = document.getElementById("module-panel");
+          if (feedback && panel && !panel.classList.contains("hidden")) {
+            feedback.textContent = this.data.label;
+            feedback.className = "feedback";
+          }
+        });
+      }
+    });
+  }
+
+  function assetsMarkup() {
+    return `
+      <a-assets>
+        <a-asset-item id="model-battery" src="./assets/models/bateria.glb"></a-asset-item>
+        <a-asset-item id="model-pipes" src="./assets/models/panel-tuberias.glb"></a-asset-item>
+        <a-asset-item id="model-computer" src="./assets/models/computadora-scifi.glb"></a-asset-item>
+      </a-assets>`;
+  }
+
   function makeBombEntity() {
     return `
       <a-entity id="bomb" position="0 0 0" rotation="-18 0 0" scale="0.78 0.78 0.78">
@@ -29,6 +69,35 @@
         <a-ring position="0 .05 .16" radius-inner=".09" radius-outer=".14"
           color="#61dafb" emissive="#61dafb"
           animation="property: rotation; to: 0 0 360; loop: true; dur: 3600; easing: linear"></a-ring>
+
+        <a-gltf-model
+          class="model-clickable"
+          src="#model-computer"
+          position="0 .50 -.03"
+          rotation="0 180 0"
+          scale=".18 .18 .18"
+          model-feedback="label: Terminal de control"
+          animation="property: position; to: 0 .53 -.03; dir: alternate; loop: true; dur: 1800; easing: easeInOutSine">
+        </a-gltf-model>
+
+        <a-gltf-model
+          class="model-clickable"
+          src="#model-battery"
+          position=".78 -.22 .02"
+          rotation="0 -35 0"
+          scale=".22 .22 .22"
+          model-feedback="label: Celda de energía"
+          animation="property: rotation; to: 0 325 0; loop: true; dur: 9000; easing: linear">
+        </a-gltf-model>
+
+        <a-gltf-model
+          class="model-clickable"
+          src="#model-pipes"
+          position="-.78 -.20 -.02"
+          rotation="-90 0 12"
+          scale=".17 .17 .17"
+          model-feedback="label: Módulo de circuitos">
+        </a-gltf-model>
       </a-entity>`;
   }
 
@@ -38,10 +107,15 @@
     if (demo) {
       root.innerHTML = `
         <a-scene embedded vr-mode-ui="enabled:false" renderer="colorManagement:true">
+          ${assetsMarkup()}
           <a-entity position="0 1.6 -2.5">
             ${makeBombEntity()}
           </a-entity>
-          <a-camera position="0 1.6 0"></a-camera>
+          <a-camera
+            position="0 1.6 0"
+            cursor="rayOrigin: mouse"
+            raycaster="objects: .model-clickable">
+          </a-camera>
           <a-light type="ambient" intensity="1.25"></a-light>
           <a-light type="directional" position="1 2 2" intensity="1.4"></a-light>
         </a-scene>`;
@@ -58,7 +132,15 @@
         vr-mode-ui="enabled:false"
         device-orientation-permission-ui="enabled:false">
 
-        <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+        ${assetsMarkup()}
+
+        <a-camera
+          position="0 0 0"
+          look-controls="enabled:false"
+          cursor="rayOrigin: mouse"
+          raycaster="objects: .model-clickable">
+        </a-camera>
+
         <a-light type="ambient" intensity="1.2"></a-light>
         <a-light type="directional" position="1 2 1" intensity="1.1"></a-light>
 

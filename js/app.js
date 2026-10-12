@@ -9,27 +9,31 @@
       <a-assets>
         <a-asset-item id="model-battery" src="./assets/models/bateria.glb"></a-asset-item>
         <a-asset-item id="model-pipes" src="./assets/models/panel-tuberias.glb"></a-asset-item>
-        <a-asset-item id="model-computer" src="./assets/models/computadora-scifi.glb"></a-asset-item>
+        <a-asset-item id="model-computer" src="./assets/models/computadora-scifi.glb"></a-asset-item>\n        <a-asset-item id="model-bomb" src="./assets/models/bomba-quaternius.glb"></a-asset-item>
       </a-assets>`;
   }
 
   function makeBombEntity() {
     return `
       <a-entity id="bomb" position="0 0 0" rotation="-18 0 0" scale="0.78 0.78 0.78">
-        <a-box id="bomb-core" position="0 0 0" width="1.5" height=".78" depth=".24"
-          color="#151b24" metalness=".75" roughness=".36"></a-box>
+        <a-gltf-model
+          id="bomb-core"
+          src="#model-bomb"
+          position="0 -.05 .02"
+          rotation="0 0 0"
+          scale=".72 .72 .72">
+        </a-gltf-model>
 
-        <a-box position="0 .26 .14" width="1.02" height=".17" depth=".04" color="#090c11"></a-box>
-        <a-text value="AR-07" position="-.43 .255 .168" width="1.3" color="#ff3b4e"></a-text>
+        <a-text value="AR-07" position="-.28 .38 .20" width=".9" color="#ff3b4e"></a-text>
 
-        <a-cylinder class="bomb-led" position="-.43 -.02 .145" radius=".055" height=".025"
+        <a-cylinder class="bomb-led" position="-.28 -.32 .18" radius=".055" height=".025"
           rotation="90 0 0" color="#ffb020"></a-cylinder>
-        <a-cylinder class="bomb-led" position="0 -.02 .145" radius=".055" height=".025"
+        <a-cylinder class="bomb-led" position="0 -.36 .18" radius=".055" height=".025"
           rotation="90 0 0" color="#ffb020"></a-cylinder>
-        <a-cylinder class="bomb-led" position=".43 -.02 .145" radius=".055" height=".025"
+        <a-cylinder class="bomb-led" position=".28 -.32 .18" radius=".055" height=".025"
           rotation="90 0 0" color="#ffb020"></a-cylinder>
 
-        <a-ring position="0 .05 .16" radius-inner=".09" radius-outer=".14"
+        <a-ring position="0 .18 .20" radius-inner=".09" radius-outer=".14"
           color="#61dafb"
           animation="property: rotation; to: 0 0 360; loop: true; dur: 3600; easing: linear"></a-ring>
 

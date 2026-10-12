@@ -21,7 +21,7 @@
           id="bomb-2"
           class="phase-bomb"
           visible="false"
-          src="./assets/models/c4-bomb.glb"
+          src="./assets/models/c4_bomb_low_poly.glb"
           fit-gltf="size: 1.22"
           position="0 .02 .18"
           rotation="0 0 0">

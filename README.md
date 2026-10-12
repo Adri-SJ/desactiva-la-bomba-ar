@@ -11,7 +11,7 @@ Completar los tres módulos del dispositivo antes de que el contador llegue a ce
 - **Módulo 3 — Estabilizador:** detener una barra móvil dentro de la zona segura.
 - Puntaje, vidas, cronómetro y finales de victoria/derrota.
 - Retroalimentación visual, sonora y vibración cuando el dispositivo lo permite.
-- Los tres modelos 3D de apoyo reaccionan al toque con sonido y una pequeña animación.
+- La experiencia utiliza una bomba 3D distinta en cada módulo.
 
 ## Tecnologías
 - HTML, CSS y JavaScript
@@ -34,9 +34,9 @@ Completar los tres módulos del dispositivo antes de que el contador llegue a ce
     │   ├── marker-bomba.png
     │   └── targets.mind
     ├── models/
-    │   ├── bateria.glb
-    │   ├── panel-tuberias.glb
-    │   └── computadora-scifi.glb
+    │   ├── bomba-quaternius.glb
+    │   ├── c4_bomb_low_poly.glb
+    │   └── time_bomb.glb
     └── audio/
 ```
 
@@ -52,13 +52,10 @@ La experiencia utiliza tres bombas principales. La primera es CC0 de Quaternius 
 | Archivo en el proyecto | Modelo original | Autor | Licencia | Fuente |
 |---|---|---|---|---|
 | `bomba-quaternius.glb` | Bomb | Quaternius | CC0 / Public Domain | https://poly.pizza/m/0oNZ1y6ghg |
-| `c4-bomb.glb` | C4-bomb | AJ / ArneJans | CC BY 4.0 | https://sketchfab.com/3d-models/c4-bomb-fc33f6537918437c80ceeb0d51707e50 |
+| `c4_bomb_low_poly.glb` | C4 Bomb Low Poly | Abel099 | CC BY 4.0 | https://sketchfab.com/3d-models/c4-bomb-low-poly-1a75fffa279d48e88a6f86d644fb227c |
 | `time_bomb.glb` | Time Bomb | barism09 | CC BY 4.0 | https://sketchfab.com/3d-models/time-bomb-0f5deb2dcbd9416dac3b72a3fd85d054 |
-| `bateria.glb` | Battery | Quaternius | CC0 / Public Domain | https://poly.pizza/m/MYa3uWdwPU |
-| `panel-tuberias.glb` | Pipes Panel | Quaternius | CC0 / Public Domain | https://poly.pizza/m/rzvuy93JU3 |
-| `computadora-scifi.glb` | Scifi Computer | Quaternius | CC0 / Public Domain | https://poly.pizza/m/U0xmt6tUlL |
 
-El modelo `time_bomb.glb` pesa aproximadamente 3.8 MB. `c4-bomb.glb` pesa aproximadamente 6.1 MB, así que conviene vigilar su tiempo de carga en móvil y optimizarlo si hiciera falta.
+La C4 low-poly es muy ligera y la Time Bomb se muestra a una escala reducida para mantenerla proporcionada en AR.
 
 ## Interacción y retroalimentación
 - Sonido de acierto y error mediante Web Audio API.\n- Efecto sintetizado de explosión al perder, acompañado de vibración, flash y sacudida de pantalla.
